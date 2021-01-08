@@ -1,3 +1,2 @@
 # TODO:
-* Make components optional in the `VirtualMachine` object
-* Improve memory code to manage instruction memory and program memory
+* See the [TODO list](https://github.com/little512/SimpleVM/projects/1)
