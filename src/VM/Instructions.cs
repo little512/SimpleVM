@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using VM.Components;
 
 namespace VM.Instruction {
-    public class C<T> where T : new() {
-
-    }
     public static class Instructions {
         public delegate int Instruction(int ptr, RegisterComponent r, StackComponent s, MemoryComponent m);
 

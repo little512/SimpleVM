@@ -3,37 +3,23 @@ using System.Reflection;
 using System.Collections.Generic;
 
 namespace VM.Components {
-    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    sealed class AddressAttribute : Attribute
-    {
-        public int Address { get; init; }
-        
-        public AddressAttribute(int address) {
-            Address = address;
-        }
-    }
-
     public class RegisterComponent {
-        [Address(0x00)]
-        public int A { get; set; }
+        public Dictionary<(int, string), int> RegisterList { get; set; }
 
-        [Address(0x01)]
-        public int X { get; set; }
+        public bool AddRegister(int addr, string name) {
+            RegisterList.Add((addr, name), 0);
+            return true;
+        }
 
-        [Address(0x02)]
-        public int Y { get; set; }
+        public bool RemoveRegister(int addr, string name) {
+            return RegisterList.Remove((addr, name));
+        }
 
         public void SetRegisterByAddress(int addr, int value) {
-            var props = typeof(RegisterComponent).GetProperties();
-
-            foreach (PropertyInfo prop in props) {
-                AddressAttribute attr = prop.GetCustomAttribute<AddressAttribute>();
-
-                if (attr is not null) {
-                    if (attr.Address == addr) {
-                        prop.SetValue(this, value, null);
-                        return;
-                    }
+            foreach (var reg in RegisterList) {
+                if (reg.Key.Item1 == addr) {
+                    RegisterList[reg.Key] = value;
+                    return;
                 }
             }
 
@@ -41,15 +27,9 @@ namespace VM.Components {
         }
 
         public int GetRegisterByAddress(int addr) {
-            var props = typeof(RegisterComponent).GetProperties();
-
-            foreach (PropertyInfo prop in props) {
-                AddressAttribute attr = prop.GetCustomAttribute<AddressAttribute>();
-
-                if (attr is not null) {
-                    if (attr.Address == addr) {
-                        return (int)prop.GetValue(this);
-                    }
+            foreach (var reg in RegisterList) {
+                if (reg.Key.Item1 == addr) {
+                    return RegisterList[reg.Key];
                 }
             }
 
@@ -57,15 +37,9 @@ namespace VM.Components {
         }
 
         public int GetRegisterAddressByName(string name) {
-            var props = typeof(RegisterComponent).GetProperties();
-
-            foreach (PropertyInfo prop in props) {
-                AddressAttribute attr = prop.GetCustomAttribute<AddressAttribute>();
-
-                if (attr is not null) {
-                    if (prop.Name == name) {
-                        return attr.Address;
-                    }
+            foreach (var reg in RegisterList) {
+                if (reg.Key.Item2 == name) {
+                    return RegisterList[reg.Key];
                 }
             }
 
@@ -73,9 +47,7 @@ namespace VM.Components {
         }
 
         public RegisterComponent() {
-            A = 0;
-            X = 0;
-            Y = 0;
+            RegisterList = new();
         }
     }
 
@@ -111,7 +83,7 @@ namespace VM.Components {
         public byte[] Memory { get; set; }
 
         public MemoryComponent() {
-            Memory = new byte[1000];
+            Memory = new byte[1000]; // TODO: make max memory field for encapsulation
         }
 
         public bool Write(int index, byte value) {

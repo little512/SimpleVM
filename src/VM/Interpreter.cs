@@ -26,7 +26,7 @@ namespace VM.Components {
             int newPointer = inst(pointer, Registers, Stack, Memory);
 #if DEBUG
             Console.WriteLine($"INSTRUCTION: {name}\nPROGRAM COUNTER: {pointer}");
-            Console.WriteLine($"A: {Registers.A}\nX: {Registers.X}\nY: {Registers.Y}");
+            // Console.WriteLine($"A: {Registers.A}\nX: {Registers.X}\nY: {Registers.Y}");
 #endif
             return newPointer;
         }
