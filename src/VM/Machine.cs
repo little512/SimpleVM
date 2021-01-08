@@ -9,10 +9,10 @@ namespace VM.Machine {
         public MemoryComponent Memory { get; init; }
         public InstructionComponent Instruction { get; init; }
 
-        public VirtualMachine() { // TODO: make components optional
+        public VirtualMachine(int memorySize) { // TODO: make components optional
             Registers = new();
             Stack = new();
-            Memory = new();
+            Memory = new(memorySize);
             Instruction = new(Registers, Stack, Memory);
         }
 
@@ -20,16 +20,21 @@ namespace VM.Machine {
             Instruction.Update();
         }
 
-        public void LoadBytecode(ReadOnlySpan<byte> bytecode) {
-            for (int i = 0; i < bytecode.Length; i++) {
+        public bool LoadBytecode(ReadOnlySpan<byte> bytecode) {
+            if (bytecode.Length > Memory.Size - Memory.ExecutionStartAddress)
+                throw new IndexOutOfRangeException("Bytecode too long for given Execution Start Address, try allocating more memory.");
+
+            for (int i = Memory.ExecutionStartAddress; i < bytecode.Length; i++) {
                 Memory.Write(i, bytecode[i]);
             }
+
+            return true;
         }
 
-        public void LoadBytecodeFromFile(string filepath) {
+        public bool LoadBytecodeFromFile(string filepath) {
             ReadOnlySpan<byte> bytecode = File.ReadAllBytes(filepath);
 
-            LoadBytecode(bytecode);
+            return LoadBytecode(bytecode);
         }
     }
 }

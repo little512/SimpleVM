@@ -80,19 +80,26 @@ namespace VM.Components {
     }
 
     public class MemoryComponent {
-        public byte[] Memory { get; set; }
+        byte[] memory { get; set; }
+        public int Size { get; init; }
+        public int ExecutionStartAddress { get; set; }
 
-        public MemoryComponent() {
-            Memory = new byte[1000]; // TODO: make max memory field for encapsulation
+        public MemoryComponent(int size, int startAddress = 0) {
+            if (startAddress > size)
+                throw new IndexOutOfRangeException("The Execution Start Address may not be larger than the Memory Size.");
+
+            memory = new byte[size];
+            Size = size;
+            ExecutionStartAddress = startAddress;
         }
 
         public bool Write(int index, byte value) {
-            Memory[index] = value;
+            memory[index] = value;
             return true;
         }
 
         public byte Read(int index) {
-            return Memory[index];
+            return memory[index];
         }
     }
 
@@ -107,6 +114,7 @@ namespace VM.Components {
             Interpreter = new(registers, stack, memory, this);
             Active = true;
             _memory = memory;
+            InstructionPointer = _memory.ExecutionStartAddress;
         }
 
         public void Update() {
