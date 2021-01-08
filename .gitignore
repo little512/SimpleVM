@@ -1,0 +1,9 @@
+# build artifacts
+**/bin/
+**/obj/
+
+# editor debugging configs
+.vscode/
+
+# bytecode files
+*.bc
