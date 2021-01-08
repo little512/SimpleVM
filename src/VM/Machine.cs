@@ -9,7 +9,7 @@ namespace VM.Machine {
         public MemoryComponent Memory { get; init; }
         public InstructionComponent Instruction { get; init; }
 
-        public VirtualMachine() {
+        public VirtualMachine() { // TODO: make components optional
             Registers = new();
             Stack = new();
             Memory = new();

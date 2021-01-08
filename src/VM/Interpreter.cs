@@ -9,24 +9,29 @@ namespace VM.Components {
         RegisterComponent Registers;
         StackComponent Stack;
         MemoryComponent Memory;
+        InstructionComponent Instruction;
 
         public InterpreterComponent(
             RegisterComponent registers,
             StackComponent stack,
-            MemoryComponent memory)
+            MemoryComponent memory,
+            InstructionComponent instruction)
         {
             Registers = registers;
             Stack = stack;
             Memory = memory;
+            Instruction = instruction;
         }
 
         public int Execute(int instruction, int pointer) {
             (string name, Inst inst) = Instructions.InstructionList[instruction];
 
-            int newPointer = inst(pointer, Registers, Stack, Memory);
+            int newPointer = inst(pointer, Registers, Stack, Memory, Instruction);
 #if DEBUG
             Console.WriteLine($"INSTRUCTION: {name}\nPROGRAM COUNTER: {pointer}");
-            // Console.WriteLine($"A: {Registers.A}\nX: {Registers.X}\nY: {Registers.Y}");
+            foreach (var reg in Registers.RegisterList){
+                Console.WriteLine($"{reg.Key.Item2}: {reg.Value}");
+            }
 #endif
             return newPointer;
         }
